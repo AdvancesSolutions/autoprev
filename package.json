@@ -1,5 +1,11 @@
 {
+  "name": "autoprev-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "cd admin && npm install && npm run build && cd .. && cp -r admin/dist ./dist"
+  },
   "dependencies": {
     "expo": "^54.0.21"
   }
 }
+
