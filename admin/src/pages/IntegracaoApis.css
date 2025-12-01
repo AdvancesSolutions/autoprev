@@ -1,0 +1,134 @@
+.integracao-apis {
+  padding: 24px;
+}
+
+.integracao-apis h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.integracao-apis .subtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.integracao-apis .info-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.integracao-apis .info-box code {
+  background: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.integracao-apis .sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.integracao-apis .section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+.integracao-apis .section h2 {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.integracao-apis .section-description {
+  color: #4b5563;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.integracao-apis .endpoint-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background: #ffffff;
+}
+
+.integracao-apis .endpoint-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.integracao-apis .method {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #ffffff;
+}
+
+.integracao-apis .method-get {
+  background: #10b981;
+}
+
+.integracao-apis .method-post {
+  background: #3b82f6;
+}
+
+.integracao-apis .method-put {
+  background: #f97316;
+}
+
+.integracao-apis .method-delete {
+  background: #ef4444;
+}
+
+.integracao-apis .path {
+  font-size: 12px;
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.integracao-apis h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.integracao-apis .endpoint-summary {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 8px;
+}
+
+.integracao-apis .code-block {
+  margin-top: 8px;
+}
+
+.integracao-apis .code-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.integracao-apis pre {
+  background: #111827;
+  color: #e5e7eb;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+.integracao-apis code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+

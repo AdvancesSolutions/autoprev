@@ -1,0 +1,98 @@
+.mensagens h1 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.mensagens .subtitle {
+  margin-bottom: 30px;
+  color: #7f8c8d;
+}
+
+.mensagens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mensagem-item {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mensagem-item label {
+  display: block;
+  margin-bottom: 10px;
+  color: #34495e;
+  font-weight: 500;
+}
+
+.mensagem-item textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.mensagem-item textarea:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.form-actions {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  padding: 12px 30px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: #229954;
+}
+
+.btn-primary:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #7f8c8d;
+}
+
+.error-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 20px;
+  color: #c33;
+  margin-top: 20px;
+}
+
+.error-message p {
+  margin-bottom: 10px;
+}
+
+.error-message code {
+  background: #fdd;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
