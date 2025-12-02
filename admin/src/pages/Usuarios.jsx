@@ -3,7 +3,7 @@ import axios from 'axios'
 import './Usuarios.css'
 
 // URL da API - usa backend da Vercel em produção
-const API_URL = import.meta.env.VITE_API_URL || 'https://backend-qpodtesls-advances-apps.vercel.app/api'
+const API_URL = 'https://backend-qpodtesls-advances-apps.vercel.app/api'
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([])
@@ -26,10 +26,13 @@ const Usuarios = () => {
     try {
       setLoading(true)
       const response = await axios.get(`${API_URL}/admin/usuarios`)
-      setUsuarios(response.data)
+      setUsuarios(response.data || [])
     } catch (error) {
       console.error('Erro ao carregar usuários:', error)
-      alert('Erro ao carregar usuários')
+      console.error('URL tentada:', `${API_URL}/admin/usuarios`)
+      console.error('Erro completo:', error.response?.data || error.message)
+      // Não mostra alert, apenas define array vazio
+      setUsuarios([])
     } finally {
       setLoading(false)
     }
