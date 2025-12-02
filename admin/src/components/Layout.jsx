@@ -37,6 +37,12 @@ const Layout = ({ children }) => {
             Funcionalidades
           </Link>
           <Link 
+            to="/usuarios" 
+            className={location.pathname === '/usuarios' ? 'active' : ''}
+          >
+            Usuários
+          </Link>
+          <Link 
             to="/integracao-apis" 
             className={location.pathname === '/integracao-apis' ? 'active' : ''}
           >

@@ -6,6 +6,7 @@ import IdentidadeVisual from './pages/IdentidadeVisual'
 import Mensagens from './pages/Mensagens'
 import Funcionalidades from './pages/Funcionalidades'
 import IntegracaoApis from './pages/IntegracaoApis'
+import Usuarios from './pages/Usuarios'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/identidade-visual" element={<IdentidadeVisual />} />
           <Route path="/mensagens" element={<Mensagens />} />
           <Route path="/funcionalidades" element={<Funcionalidades />} />
+          <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/integracao-apis" element={<IntegracaoApis />} />
         </Routes>
       </Layout>

@@ -30,6 +30,13 @@ const Dashboard = () => {
           </div>
         </Link>
         
+        <Link to="/usuarios" className="dashboard-card-link">
+          <div className="dashboard-card">
+            <h3>Usuários</h3>
+            <p>Gerencie usuários e participantes</p>
+          </div>
+        </Link>
+        
         <Link to="/integracao-apis" className="dashboard-card-link">
           <div className="dashboard-card">
             <h3>Integração / APIs</h3>
