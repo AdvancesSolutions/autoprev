@@ -49,6 +49,10 @@ app.use('/api/participantes', beneficiosRoutes);
 app.use('/api/participantes', emprestimosRoutes);
 app.use('/api/participantes', notificacoesRoutes);
 
+// Debug: Log das rotas registradas
+console.log('Rotas registradas:');
+console.log('- /api/admin/usuarios');
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -58,9 +62,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
+// 404 handler - deve ser o último middleware
 app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  console.log('404 - Rota não encontrada:', req.method, req.path);
+  res.status(404).json({ error: 'Route not found', path: req.path, method: req.method });
 });
 
 // Only start the server if not running on Vercel
