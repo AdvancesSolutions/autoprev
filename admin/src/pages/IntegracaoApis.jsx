@@ -1,7 +1,7 @@
 import React from 'react'
 import './IntegracaoApis.css'
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://backend-qpodtesls-advances-apps.vercel.app'
 
 const sections = [
   {
