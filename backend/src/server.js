@@ -41,6 +41,10 @@ app.use('/api/entidade', entidadeRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/usuarios', adminUsuariosRoutes);
+// Test route
+app.get('/api/admin/usuarios/test', (req, res) => {
+  res.json({ message: 'Rota de teste funcionando', timestamp: new Date().toISOString() });
+});
 app.use('/api/institutos', documentosRoutes);
 app.use('/api/participantes', participantesRoutes);
 app.use('/api/participantes', contribuicoesRoutes);
