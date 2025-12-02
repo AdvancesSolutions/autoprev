@@ -1,9 +1,9 @@
-// Importa participantes do authController
+// Mock data - em produção, isso viria de um banco de dados
+// Acessa participantes do authController
 const authController = require('./authController');
 const participantes = authController.participantes || [];
 
-// Mock data - em produção, isso viria de um banco de dados
-// Importa dados dos participantes
+// Acessa dados dos participantes
 const participantesController = require('./participantesController');
 const participantesData = participantesController.participantesData || {};
 

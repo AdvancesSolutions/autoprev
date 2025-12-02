@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import './Funcionalidades.css'
 
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+// URL da API - usa backend da Vercel em produção
+const API_URL = import.meta.env.VITE_API_URL || 'https://backend-qpodtesls-advances-apps.vercel.app/api'
 
 const Funcionalidades = () => {
   const [entidade, setEntidade] = useState(null)
