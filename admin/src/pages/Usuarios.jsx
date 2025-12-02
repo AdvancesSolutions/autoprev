@@ -138,6 +138,9 @@ const Usuarios = () => {
     }
   }
 
+  // Debug: verificar se componente está sendo renderizado
+  console.log('Usuarios component renderizado', { loading, usuariosCount: usuarios.length })
+
   if (loading) {
     return <div className="usuarios-loading">Carregando usuários...</div>
   }
