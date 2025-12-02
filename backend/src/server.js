@@ -15,6 +15,7 @@ const emprestimosRoutes = require('./routes/emprestimos');
 const notificacoesRoutes = require('./routes/notificacoes');
 const documentosRoutes = require('./routes/documentos');
 const adminUsuariosRoutes = require('./routes/adminUsuarios');
+console.log('adminUsuariosRoutes carregado:', !!adminUsuariosRoutes);
 
 const app = express();
 const PORT = process.env.PORT || 3000;

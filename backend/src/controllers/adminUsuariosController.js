@@ -13,6 +13,14 @@ const adminUsuariosController = {
    */
   listarUsuarios: async (req, res) => {
     try {
+      console.log('ListarUsuarios chamado');
+      console.log('Participantes:', participantes?.length || 0);
+      
+      if (!participantes || participantes.length === 0) {
+        // Retorna array vazio se não houver participantes
+        return res.json([]);
+      }
+
       const usuarios = participantes.map(p => {
         const dados = participantesData[p.cpf] || {};
         return {
@@ -28,6 +36,7 @@ const adminUsuariosController = {
 
       res.json(usuarios);
     } catch (error) {
+      console.error('Erro em listarUsuarios:', error);
       res.status(500).json({ error: error.message });
     }
   },
