@@ -14,9 +14,9 @@ const Layout = ({ children }) => {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-xl z-50">
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-xl z-50 overflow-y-auto">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-6 border-b border-slate-700">
@@ -25,7 +25,7 @@ const Layout = ({ children }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <nav className="flex-1 p-4 space-y-2">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path
               return (
@@ -57,7 +57,7 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="ml-64 min-h-screen">
+      <main className="flex-1 ml-64 min-h-screen">
         <div className="p-8">
           {children}
         </div>
