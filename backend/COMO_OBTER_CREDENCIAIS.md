@@ -20,8 +20,8 @@ Após o projeto ser criado:
 
 1. No dashboard do Supabase, você verá o nome do seu projeto no topo
 2. Clique em **Settings** (ícone de engrenagem) no menu lateral esquerdo
-3. Clique em **API** no submenu
-4. Na seção **Project URL**, você verá algo como:
+3. Clique em **General** (ou **API**) no submenu
+4. Na seção **Project URL** ou **Reference ID**, você verá algo como:
 
 ```
 https://abcdefghijklmnop.supabase.co
@@ -33,12 +33,14 @@ https://abcdefghijklmnop.supabase.co
 
 ### 3️⃣ Encontrar a Chave Anon
 
-Na mesma página (Settings → API):
-
-1. Role até a seção **Project API keys**
-2. Você verá várias chaves. Procure por **"anon public"**
-3. Clique no ícone de **olho** 👁️ para revelar a chave
-4. Clique no ícone de **cópia** 📋 para copiar
+1. No menu lateral, vá em **Settings** → **Authentication** → **API Keys**
+2. Você verá duas abas no topo:
+   - **"Publishable and secret API keys"** (nova interface)
+   - **"Legacy anon, service_role API keys"** ← **CLIQUE AQUI!**
+3. Na aba **"Legacy anon, service_role API keys"**, você verá:
+   - **anon public** - Esta é a chave que você precisa!
+   - **service_role** - NÃO use esta (é mais perigosa)
+4. Clique no ícone de **cópia** 📋 ao lado da chave **anon public**
 
 A chave será algo assim:
 ```
@@ -47,7 +49,9 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiY2RlZmd
 
 **Esta é a sua SUPABASE_ANON_KEY!**
 
-⚠️ **ATENÇÃO**: Use a chave **"anon public"**, NÃO a **"service_role"** (que é mais perigosa)
+⚠️ **ATENÇÃO**: 
+- Use a chave **"anon public"**, NÃO a **"service_role"** (que é mais perigosa)
+- Se você estiver na aba "Publishable and secret API keys", mude para a aba "Legacy anon, service_role API keys"
 
 ### 4️⃣ Criar o Arquivo .env
 

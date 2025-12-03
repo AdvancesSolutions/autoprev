@@ -16,13 +16,19 @@ Este guia explica como configurar o Supabase para armazenar os usuários do sist
 
 ## 2. Obter Credenciais
 
-1. No dashboard do Supabase, vá em **Settings** → **API**
-2. Você verá uma seção chamada **Project API keys**
-3. Copie as seguintes informações:
-   - **Project URL** (SUPABASE_URL) - Exemplo: `https://abcdefghijklmnop.supabase.co`
-     - ⚠️ **IMPORTANTE**: Substitua `abcdefghijklmnop` pela URL real do seu projeto
-   - **anon public** key (SUPABASE_ANON_KEY) - Uma chave longa que começa com `eyJ...`
-     - ⚠️ Use a chave **anon public**, NÃO a **service_role**
+### Project URL (SUPABASE_URL)
+
+1. No dashboard do Supabase, vá em **Settings** → **General** (ou **API**)
+2. Procure pela seção **Project URL** ou **Reference ID**
+3. Copie a URL completa, exemplo: `https://abcdefghijklmnop.supabase.co`
+   - ⚠️ **IMPORTANTE**: Substitua `abcdefghijklmnop` pela URL real do seu projeto
+
+### Chave Anon (SUPABASE_ANON_KEY)
+
+1. Vá em **Settings** → **Authentication** → **API Keys**
+2. Clique na aba **"Legacy anon, service_role API keys"** (no topo da página)
+3. Copie a chave **"anon public"** (NÃO use a "service_role")
+   - A chave começa com `eyJ...` e é bem longa
 
 ### Exemplo de como ficará:
 
@@ -32,8 +38,8 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 ```
 
 **Onde encontrar:**
-- A URL está no topo da página, logo abaixo de "Project URL"
-- A chave está na seção "Project API keys" → "anon public"
+- **URL**: Settings → General → Project URL
+- **Chave**: Settings → Authentication → API Keys → Aba "Legacy anon, service_role API keys" → "anon public"
 
 ## 3. Criar Tabela no Banco de Dados
 
