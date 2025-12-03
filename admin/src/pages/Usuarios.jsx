@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Users, Plus, Edit, Trash2, Loader2, UserPlus, Search, Filter, MoreVertical } from 'lucide-react'
 
-// URL da API - usa backend da Vercel em produção
-const API_URL = 'https://backend-qpodtesls-advances-apps.vercel.app/api'
+// URL da API - usa proxy do Vite em desenvolvimento, Vercel em produção
+const API_URL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api' // Usa proxy do Vite em desenvolvimento
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([])
