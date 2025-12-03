@@ -3,9 +3,11 @@ import axios from 'axios'
 import { Users, Plus, Edit, Trash2, Loader2, UserPlus, Search, Filter, MoreVertical } from 'lucide-react'
 
 // URL da API - usa proxy do Vite em desenvolvimento, Vercel em produção
-const API_URL = import.meta.env.VITE_API_URL 
+// Em desenvolvimento, sempre usa o proxy do Vite (/api)
+// Em produção, usa a variável de ambiente ou Vercel
+const API_URL = import.meta.env.MODE === 'production' && import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
-  : '/api' // Usa proxy do Vite em desenvolvimento
+  : '/api' // Sempre usa proxy do Vite em desenvolvimento
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([])
