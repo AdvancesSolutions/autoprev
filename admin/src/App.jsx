@@ -8,13 +8,7 @@ import Funcionalidades from './pages/Funcionalidades'
 import IntegracaoApis from './pages/IntegracaoApis'
 import Usuarios from './pages/Usuarios'
 
-// Debug: verificar se Usuarios está sendo importado
-console.log('App.jsx carregado')
-console.log('Usuarios importado:', !!Usuarios)
-
 function App() {
-  console.log('App component renderizado')
-  
   return (
     <Router>
       <Layout>
@@ -32,4 +26,3 @@ function App() {
 }
 
 export default App
-

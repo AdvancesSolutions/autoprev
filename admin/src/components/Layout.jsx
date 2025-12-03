@@ -4,9 +4,6 @@ import './Layout.css'
 
 const Layout = ({ children }) => {
   const location = useLocation()
-  
-  // Debug: verificar pathname atual
-  console.log('Layout renderizado, pathname:', location.pathname)
 
   return (
     <div className="layout">
@@ -54,11 +51,10 @@ const Layout = ({ children }) => {
         </nav>
       </aside>
       <main className="main-content">
-        {children || <div>Nenhum conteúdo carregado. Pathname: {location.pathname}</div>}
+        {children}
       </main>
     </div>
   )
 }
 
 export default Layout
-
