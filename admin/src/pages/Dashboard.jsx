@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Palette, MessageSquare, Settings, Users, Plug } from 'lucide-react'
 
 const Dashboard = () => {
   const cards = [
@@ -7,71 +8,139 @@ const Dashboard = () => {
       path: '/identidade-visual',
       title: 'Identidade Visual',
       description: 'Configure logo, cores e nome do app',
-      icon: '🎨',
-      color: 'from-purple-500 to-pink-500'
+      icon: Palette,
+      color: '#8b5cf6'
     },
     {
       path: '/mensagens',
       title: 'Mensagens',
       description: 'Gerencie textos e mensagens do app',
-      icon: '💬',
-      color: 'from-blue-500 to-cyan-500'
+      icon: MessageSquare,
+      color: '#3b82f6'
     },
     {
       path: '/funcionalidades',
       title: 'Funcionalidades',
       description: 'Habilite ou desabilite funcionalidades',
-      icon: '⚙️',
-      color: 'from-green-500 to-emerald-500'
+      icon: Settings,
+      color: '#10b981'
     },
     {
       path: '/usuarios',
       title: 'Usuários',
       description: 'Gerencie usuários e participantes',
-      icon: '👥',
-      color: 'from-orange-500 to-red-500'
+      icon: Users,
+      color: '#f59e0b'
     },
     {
       path: '/integracao-apis',
       title: 'Integração / APIs',
       description: 'Documentação e exemplos de integração',
-      icon: '🔌',
-      color: 'from-indigo-500 to-purple-500'
+      icon: Plug,
+      color: '#6366f1'
     },
   ]
 
   return (
-    <div className="space-y-8">
+    <div>
       {/* Header */}
-      <div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Bem-vindo ao painel de administração do Autoprev</p>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ 
+          fontSize: '32px', 
+          fontWeight: '700', 
+          color: '#111827', 
+          marginBottom: '8px',
+          letterSpacing: '-0.5px'
+        }}>
+          Dashboard
+        </h1>
+        <p style={{ 
+          fontSize: '16px', 
+          color: '#6b7280',
+          margin: 0
+        }}>
+          Bem-vindo ao painel de administração do Autoprev
+        </p>
       </div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card) => (
-          <Link
-            key={card.path}
-            to={card.path}
-            className="group block"
-          >
-            <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group-hover:scale-105">
-              <div className={`bg-gradient-to-r ${card.color} p-6`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-4xl">{card.icon}</span>
-                  <svg className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gap: '20px'
+      }}>
+        {cards.map((card) => {
+          const Icon = card.icon
+          return (
+            <Link
+              key={card.path}
+              to={card.path}
+              style={{
+                textDecoration: 'none',
+                display: 'block'
+              }}
+            >
+              <div style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+                padding: '24px',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#d1d5db'
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e5e7eb'
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+              >
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '10px',
+                    backgroundColor: `${card.color}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <Icon size={24} color={card.color} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      color: '#111827',
+                      margin: 0,
+                      marginBottom: '4px'
+                    }}>
+                      {card.title}
+                    </h3>
+                    <p style={{
+                      fontSize: '14px',
+                      color: '#6b7280',
+                      margin: 0,
+                      lineHeight: '1.5'
+                    }}>
+                      {card.description}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{card.title}</h3>
-                <p className="text-gray-600 text-sm">{card.description}</p>
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          )
+        })}
       </div>
     </div>
   )
