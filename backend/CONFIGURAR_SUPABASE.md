@@ -17,9 +17,23 @@ Este guia explica como configurar o Supabase para armazenar os usuários do sist
 ## 2. Obter Credenciais
 
 1. No dashboard do Supabase, vá em **Settings** → **API**
-2. Copie as seguintes informações:
-   - **Project URL** (SUPABASE_URL)
-   - **anon public** key (SUPABASE_ANON_KEY)
+2. Você verá uma seção chamada **Project API keys**
+3. Copie as seguintes informações:
+   - **Project URL** (SUPABASE_URL) - Exemplo: `https://abcdefghijklmnop.supabase.co`
+     - ⚠️ **IMPORTANTE**: Substitua `abcdefghijklmnop` pela URL real do seu projeto
+   - **anon public** key (SUPABASE_ANON_KEY) - Uma chave longa que começa com `eyJ...`
+     - ⚠️ Use a chave **anon public**, NÃO a **service_role**
+
+### Exemplo de como ficará:
+
+```
+SUPABASE_URL=https://abcdefghijklmnop.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiY2RlZmdoaWprbG1ub3AiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYzODU2Nzg5MCwiZXhwIjoxOTU0MTQzODkwfQ.exemplo...
+```
+
+**Onde encontrar:**
+- A URL está no topo da página, logo abaixo de "Project URL"
+- A chave está na seção "Project API keys" → "anon public"
 
 ## 3. Criar Tabela no Banco de Dados
 
