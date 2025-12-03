@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
+const supabase = require('../config/supabase');
 
-// Mock data - em produção, isso viria de um banco de dados
+// Mock data - fallback se Supabase não estiver configurado
 // CPFs válidos para teste: 11144477735, 77744411135
 let participantes = [
   {
@@ -50,9 +51,45 @@ const authController = {
 
       const cpfLimpo = cpf.replace(/\D/g, '');
       console.log('CPF limpo:', cpfLimpo);
+
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        const { data: usuario, error } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('cpf', cpfLimpo)
+          .eq('ativo', true)
+          .single();
+
+        if (!error && usuario) {
+          // Valida senha com bcrypt
+          const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+          if (!senhaValida) {
+            console.log('Senha inválida');
+            return res.status(401).json({ error: 'CPF ou senha inválidos' });
+          }
+
+          console.log('Login bem-sucedido (Supabase):', usuario.nome);
+
+          // Gera token JWT
+          const token = jwt.sign(
+            { cpf: usuario.cpf, nome: usuario.nome },
+            process.env.JWT_SECRET || 'secret',
+            { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+          );
+
+          return res.json({
+            token,
+            perfis: usuario.perfis || []
+          });
+        }
+      }
+
+      // Fallback: dados mockados
+      console.log('Usando dados mockados (fallback)');
       console.log('Participantes disponíveis:', participantes.map(p => p.cpf));
 
-      // Busca participante
       const participante = participantes.find(p => p.cpf === cpfLimpo);
 
       if (!participante) {
@@ -101,31 +138,51 @@ const authController = {
         return res.status(400).json({ error: 'CPF é obrigatório' });
       }
 
-      const participante = participantes.find(p => p.cpf === cpf.replace(/\D/g, ''));
+      const cpfLimpo = cpf.replace(/\D/g, '');
 
-      if (!participante) {
-        // Por segurança, não revela se o CPF existe ou não
-        return res.json({ 
-          message: 'Se o CPF estiver cadastrado, você receberá um código de recuperação',
-          canais_disponiveis: ['email', 'sms']
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        const { data: usuario, error } = await supabase
+          .from('usuarios')
+          .select('cpf, nome, email')
+          .eq('cpf', cpfLimpo)
+          .single();
+
+        if (error || !usuario) {
+          return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        // Gera código de recuperação
+        const codigo = Math.floor(100000 + Math.random() * 900000).toString();
+        codigosRecuperacao.set(cpfLimpo, {
+          codigo,
+          expiraEm: Date.now() + 15 * 60 * 1000 // 15 minutos
+        });
+
+        // Aqui você enviaria o código por email
+        console.log(`Código de recuperação para ${usuario.email}: ${codigo}`);
+
+        return res.json({
+          message: 'Código de recuperação enviado',
+          email: usuario.email ? usuario.email.replace(/(.{2})(.*)(@.*)/, '$1***$3') : null
         });
       }
 
-      // Gera código de 6 dígitos
-      const codigo = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      // Armazena código (expira em 15 minutos)
-      codigosRecuperacao.set(cpf, {
-        codigo,
-        expiresAt: Date.now() + 15 * 60 * 1000
-      });
+      // Fallback: dados mockados
+      const participante = participantes.find(p => p.cpf === cpfLimpo);
+      if (!participante) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+      }
 
-      // Em produção, enviar código por email/SMS
-      console.log(`Código de recuperação para ${cpf}: ${codigo}`);
+      const codigo = Math.floor(100000 + Math.random() * 900000).toString();
+      codigosRecuperacao.set(cpfLimpo, {
+        codigo,
+        expiraEm: Date.now() + 15 * 60 * 1000
+      });
 
       res.json({
         message: 'Código de recuperação enviado',
-        canais_disponiveis: ['email', 'sms']
+        email: 'usuario@email.com' // Mock
       });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -143,76 +200,81 @@ const authController = {
         return res.status(400).json({ error: 'CPF e código são obrigatórios' });
       }
 
-      const dadosRecuperacao = codigosRecuperacao.get(cpf.replace(/\D/g, ''));
+      const cpfLimpo = cpf.replace(/\D/g, '');
+      const dados = codigosRecuperacao.get(cpfLimpo);
 
-      if (!dadosRecuperacao) {
-        return res.status(400).json({ error: 'Código inválido ou expirado' });
-      }
-
-      if (Date.now() > dadosRecuperacao.expiresAt) {
-        codigosRecuperacao.delete(cpf.replace(/\D/g, ''));
-        return res.status(400).json({ error: 'Código expirado' });
-      }
-
-      if (dadosRecuperacao.codigo !== codigo) {
+      if (!dados || dados.codigo !== codigo) {
         return res.status(400).json({ error: 'Código inválido' });
       }
 
-      // Gera token temporário para reset de senha
-      const resetToken = jwt.sign(
-        { cpf: cpf.replace(/\D/g, ''), tipo: 'reset' },
-        process.env.JWT_SECRET || 'secret',
-        { expiresIn: '15m' }
-      );
+      if (Date.now() > dados.expiraEm) {
+        codigosRecuperacao.delete(cpfLimpo);
+        return res.status(400).json({ error: 'Código expirado' });
+      }
 
-      res.json({
-        status: 'validado',
-        reset_token: resetToken
-      });
+      res.json({ message: 'Código válido' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   },
 
   /**
-   * Redefine a senha
+   * Redefine senha
    */
   resetPassword: async (req, res) => {
     try {
-      const { reset_token, nova_senha } = req.body;
+      const { cpf, codigo, novaSenha } = req.body;
 
-      if (!reset_token || !nova_senha) {
-        return res.status(400).json({ error: 'Token e nova senha são obrigatórios' });
+      if (!cpf || !codigo || !novaSenha) {
+        return res.status(400).json({ error: 'CPF, código e nova senha são obrigatórios' });
       }
 
-      // Valida token
-      let decoded;
-      try {
-        decoded = jwt.verify(reset_token, process.env.JWT_SECRET || 'secret');
-      } catch (error) {
-        return res.status(401).json({ error: 'Token inválido ou expirado' });
+      const cpfLimpo = cpf.replace(/\D/g, '');
+      const dados = codigosRecuperacao.get(cpfLimpo);
+
+      if (!dados || dados.codigo !== codigo) {
+        return res.status(400).json({ error: 'Código inválido' });
       }
 
-      if (decoded.tipo !== 'reset') {
-        return res.status(401).json({ error: 'Token inválido' });
+      if (Date.now() > dados.expiraEm) {
+        codigosRecuperacao.delete(cpfLimpo);
+        return res.status(400).json({ error: 'Código expirado' });
       }
 
-      // Atualiza senha (em produção, usar bcrypt.hash)
-      const participante = participantes.find(p => p.cpf === decoded.cpf);
+      // Hash da nova senha
+      const senhaHash = await bcrypt.hash(novaSenha, 10);
+
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        const { error } = await supabase
+          .from('usuarios')
+          .update({ senha: senhaHash })
+          .eq('cpf', cpfLimpo);
+
+        if (error) {
+          console.error('Erro ao atualizar senha no Supabase:', error);
+          return res.status(500).json({ error: error.message });
+        }
+
+        codigosRecuperacao.delete(cpfLimpo);
+        return res.json({ message: 'Senha redefinida com sucesso' });
+      }
+
+      // Fallback: dados mockados
+      const participante = participantes.find(p => p.cpf === cpfLimpo);
       if (participante) {
-        participante.senha = await bcrypt.hash(nova_senha, 10);
+        participante.senha = senhaHash;
       }
 
-      // Remove código de recuperação
-      codigosRecuperacao.delete(decoded.cpf);
-
+      codigosRecuperacao.delete(cpfLimpo);
       res.json({ message: 'Senha redefinida com sucesso' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
+
+  // Exporta participantes para uso em outros controllers (fallback)
+  participantes: participantes
 };
 
 module.exports = authController;
-module.exports.participantes = participantes;
-

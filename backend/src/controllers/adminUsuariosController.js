@@ -1,9 +1,9 @@
-// Mock data - em produção, isso viria de um banco de dados
-// Acessa participantes do authController
+const supabase = require('../config/supabase');
+const bcrypt = require('bcryptjs');
+
+// Fallback para dados mockados se Supabase não estiver configurado
 const authController = require('./authController');
 const participantes = authController.participantes || [];
-
-// Acessa dados dos participantes
 const participantesController = require('./participantesController');
 const participantesData = participantesController.participantesData || {};
 
@@ -14,10 +14,36 @@ const adminUsuariosController = {
   listarUsuarios: async (req, res) => {
     try {
       console.log('ListarUsuarios chamado');
+      
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('usuarios')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Erro ao buscar usuários no Supabase:', error);
+          // Fallback para dados mockados
+        } else if (data) {
+          const usuarios = data.map(u => ({
+            cpf: u.cpf,
+            nome: u.nome,
+            email: u.email || '',
+            telefone: u.telefone || '',
+            perfis: u.perfis || [],
+            ativo: u.ativo !== false,
+            data_cadastro: u.created_at || new Date().toISOString()
+          }));
+          return res.json(usuarios);
+        }
+      }
+
+      // Fallback: dados mockados
+      console.log('Usando dados mockados (fallback)');
       console.log('Participantes:', participantes?.length || 0);
       
       if (!participantes || participantes.length === 0) {
-        // Retorna array vazio se não houver participantes
         return res.json([]);
       }
 
@@ -47,8 +73,34 @@ const adminUsuariosController = {
   buscarUsuario: async (req, res) => {
     try {
       const { cpf } = req.params;
-      const participante = participantes.find(p => p.cpf === cpf.replace(/\D/g, ''));
+      const cpfLimpo = cpf.replace(/\D/g, '');
 
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('usuarios')
+          .select('*')
+          .eq('cpf', cpfLimpo)
+          .single();
+
+        if (!error && data) {
+          return res.json({
+            cpf: data.cpf,
+            nome: data.nome,
+            email: data.email || '',
+            telefone: data.telefone || '',
+            perfis: data.perfis || [],
+            ativo: data.ativo !== false,
+            cadastro: {
+              email_contato: data.email,
+              telefone_celular: data.telefone
+            }
+          });
+        }
+      }
+
+      // Fallback: dados mockados
+      const participante = participantes.find(p => p.cpf === cpfLimpo);
       if (!participante) {
         return res.status(404).json({ error: 'Usuário não encontrado' });
       }
@@ -82,30 +134,78 @@ const adminUsuariosController = {
       }
 
       const cpfLimpo = cpf.replace(/\D/g, '');
-      
-      // Verifica se já existe
+
+      // Hash da senha
+      const senhaHash = await bcrypt.hash(senha, 10);
+
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        // Verifica se já existe
+        const { data: existe } = await supabase
+          .from('usuarios')
+          .select('cpf')
+          .eq('cpf', cpfLimpo)
+          .single();
+
+        if (existe) {
+          return res.status(400).json({ error: 'Usuário já existe' });
+        }
+
+        // Cria novo usuário
+        const { data, error } = await supabase
+          .from('usuarios')
+          .insert({
+            cpf: cpfLimpo,
+            nome: nome,
+            senha: senhaHash,
+            email: email || null,
+            telefone: telefone || null,
+            perfis: [{
+              plano_id: 1,
+              nome_plano: 'Plano Básico',
+              papel: 'ativo'
+            }],
+            ativo: true
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Erro ao criar usuário no Supabase:', error);
+          return res.status(500).json({ error: error.message });
+        }
+
+        return res.status(201).json({
+          message: 'Usuário criado com sucesso',
+          usuario: {
+            cpf: data.cpf,
+            nome: data.nome,
+            email: data.email,
+            telefone: data.telefone,
+            perfis: data.perfis
+          }
+        });
+      }
+
+      // Fallback: dados mockados
       const existe = participantes.find(p => p.cpf === cpfLimpo);
       if (existe) {
         return res.status(400).json({ error: 'Usuário já existe' });
       }
 
-      // Cria novo participante
       const novoParticipante = {
         cpf: cpfLimpo,
-        senha: senha, // Em produção, usar bcrypt.hash
+        senha: senhaHash,
         nome: nome,
-        perfis: [
-          {
-            plano_id: 1,
-            nome_plano: 'Plano Básico',
-            papel: 'ativo'
-          }
-        ]
+        perfis: [{
+          plano_id: 1,
+          nome_plano: 'Plano Básico',
+          papel: 'ativo'
+        }]
       };
 
       participantes.push(novoParticipante);
 
-      // Inicializa dados do participante
       if (!participantesData[cpfLimpo]) {
         participantesData[cpfLimpo] = {
           cpf: cpfLimpo,
@@ -128,6 +228,7 @@ const adminUsuariosController = {
         }
       });
     } catch (error) {
+      console.error('Erro ao criar usuário:', error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -139,19 +240,54 @@ const adminUsuariosController = {
     try {
       const { cpf } = req.params;
       const { nome, email, telefone, senha } = req.body;
-
       const cpfLimpo = cpf.replace(/\D/g, '');
-      const participante = participantes.find(p => p.cpf === cpfLimpo);
 
+      const updateData = {};
+      if (nome) updateData.nome = nome;
+      if (email !== undefined) updateData.email = email || null;
+      if (telefone !== undefined) updateData.telefone = telefone || null;
+      if (senha) {
+        updateData.senha = await bcrypt.hash(senha, 10);
+      }
+
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('usuarios')
+          .update(updateData)
+          .eq('cpf', cpfLimpo)
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Erro ao atualizar usuário no Supabase:', error);
+          return res.status(500).json({ error: error.message });
+        }
+
+        if (!data) {
+          return res.status(404).json({ error: 'Usuário não encontrado' });
+        }
+
+        return res.json({
+          message: 'Usuário atualizado com sucesso',
+          usuario: {
+            cpf: data.cpf,
+            nome: data.nome,
+            email: data.email,
+            telefone: data.telefone
+          }
+        });
+      }
+
+      // Fallback: dados mockados
+      const participante = participantes.find(p => p.cpf === cpfLimpo);
       if (!participante) {
         return res.status(404).json({ error: 'Usuário não encontrado' });
       }
 
-      // Atualiza dados
       if (nome) participante.nome = nome;
-      if (senha) participante.senha = senha; // Em produção, usar bcrypt.hash
+      if (senha) participante.senha = await bcrypt.hash(senha, 10);
 
-      // Atualiza dados cadastrais
       if (!participantesData[cpfLimpo]) {
         participantesData[cpfLimpo] = { cpf: cpfLimpo, cadastro: {} };
       }
@@ -171,6 +307,7 @@ const adminUsuariosController = {
         }
       });
     } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -183,6 +320,22 @@ const adminUsuariosController = {
       const { cpf } = req.params;
       const cpfLimpo = cpf.replace(/\D/g, '');
 
+      // Tenta usar Supabase primeiro
+      if (supabase) {
+        const { error } = await supabase
+          .from('usuarios')
+          .delete()
+          .eq('cpf', cpfLimpo);
+
+        if (error) {
+          console.error('Erro ao remover usuário no Supabase:', error);
+          return res.status(500).json({ error: error.message });
+        }
+
+        return res.json({ message: 'Usuário removido com sucesso' });
+      }
+
+      // Fallback: dados mockados
       const index = participantes.findIndex(p => p.cpf === cpfLimpo);
       if (index === -1) {
         return res.status(404).json({ error: 'Usuário não encontrado' });
@@ -193,10 +346,10 @@ const adminUsuariosController = {
 
       res.json({ message: 'Usuário removido com sucesso' });
     } catch (error) {
+      console.error('Erro ao remover usuário:', error);
       res.status(500).json({ error: error.message });
     }
   }
 };
 
 module.exports = adminUsuariosController;
-
