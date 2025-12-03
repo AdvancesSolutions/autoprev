@@ -14,42 +14,71 @@ const Layout = ({ children }) => {
   ]
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white shadow-xl z-50 overflow-y-auto">
-        <div className="flex flex-col h-full">
+      <aside style={{
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        height: '100vh',
+        width: '256px',
+        background: 'linear-gradient(to bottom, #1e293b, #0f172a)',
+        color: 'white',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        zIndex: 50,
+        overflowY: 'auto'
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           {/* Header */}
-          <div className="p-6 border-b border-slate-700">
-            <h1 className="text-2xl font-bold text-white">Autoprev</h1>
-            <p className="text-sm text-slate-400 mt-1">Administração</p>
+          <div style={{ padding: '24px', borderBottom: '1px solid #334155' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>Autoprev</h1>
+            <p style={{ fontSize: '14px', color: '#94a3b8', marginTop: '4px', margin: 0 }}>Administração</p>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav style={{ flex: 1, padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {navItems.map((item) => {
               const isActive = location.pathname === item.path
               return (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`
-                    flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200
-                    ${isActive
-                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    color: isActive ? 'white' : '#cbd5e1',
+                    backgroundColor: isActive ? '#2563eb' : 'transparent',
+                    boxShadow: isActive ? '0 10px 15px -3px rgba(37, 99, 235, 0.5)' : 'none',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.target.style.backgroundColor = '#334155'
+                      e.target.style.color = 'white'
                     }
-                  `}
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.target.style.backgroundColor = 'transparent'
+                      e.target.style.color = '#cbd5e1'
+                    }
+                  }}
                 >
-                  <span className="text-xl">{item.icon}</span>
-                  <span className="font-medium">{item.label}</span>
+                  <span style={{ fontSize: '20px' }}>{item.icon}</span>
+                  <span style={{ fontWeight: 500 }}>{item.label}</span>
                 </Link>
               )
             })}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-700">
-            <p className="text-xs text-slate-400 text-center">
+          <div style={{ padding: '16px', borderTop: '1px solid #334155' }}>
+            <p style={{ fontSize: '12px', color: '#94a3b8', textAlign: 'center', margin: 0 }}>
               © 2025 Autoprev
             </p>
           </div>
@@ -57,8 +86,8 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 min-h-screen">
-        <div className="p-8">
+      <main style={{ marginLeft: '256px', flex: 1, minHeight: '100vh' }}>
+        <div style={{ padding: '32px' }}>
           {children}
         </div>
       </main>
